@@ -1,3 +1,5 @@
+import { toContainElement } from "@testing-library/jest-dom/matchers";
+
 /**
  * Consume an array of numbers, and return a new array containing
  * JUST the first and last number. If there are no elements, return
@@ -5,7 +7,16 @@
  * the number twice.
  */
 export function bookEndList(numbers: number[]): number[] {
-    return numbers;
+    let x: number[] = [];
+    if (numbers.length == 0) return [];
+    else if (numbers.length == 1) {
+        x.push(numbers[0]);
+        x.push(numbers[0]);
+    } else {
+        x.push(numbers[0]);
+        x.push(numbers[numbers.length - 1]);
+    }
+    return x;
 }
 
 /**
@@ -13,7 +24,8 @@ export function bookEndList(numbers: number[]): number[] {
  * number has been tripled (multiplied by 3).
  */
 export function tripleNumbers(numbers: number[]): number[] {
-    return numbers;
+    const x = numbers.map((y: number): number => y * 3);
+    return x;
 }
 
 /**
@@ -21,7 +33,10 @@ export function tripleNumbers(numbers: number[]): number[] {
  * the number cannot be parsed as an integer, convert it to 0 instead.
  */
 export function stringsToIntegers(numbers: string[]): number[] {
-    return [];
+    const x = numbers.map((y: string): number =>
+        Number.isNaN(parseInt(y)) ? 0 : parseInt(y),
+    );
+    return x;
 }
 
 /**
@@ -32,7 +47,17 @@ export function stringsToIntegers(numbers: string[]): number[] {
  */
 // Remember, you can write functions as lambdas too! They work exactly the same.
 export const removeDollars = (amounts: string[]): number[] => {
-    return [];
+    let check = (str: string) => str[0] == "$";
+    //disgusting nested ternary operators, auto format makes it worse to look at
+    const x = amounts.map((y: string): number =>
+        check(y) ?
+            Number.isNaN(parseInt(y.substring(1))) ?
+                0
+            :   parseInt(y.substring(1))
+        : Number.isNaN(parseInt(y)) ? 0
+        : parseInt(y),
+    );
+    return x;
 };
 
 /**
@@ -41,7 +66,13 @@ export const removeDollars = (amounts: string[]): number[] => {
  * in question marks ("?").
  */
 export const shoutIfExclaiming = (messages: string[]): string[] => {
-    return [];
+    let exclamation = (str: string) => str[str.length - 1] == "!";
+    let question = (str: string) => str[str.length - 1] == "?";
+
+    const x = messages
+        .filter((y: string): boolean => !question(y))
+        .map((y: string): string => (exclamation(y) ? y.toUpperCase() : y));
+    return x;
 };
 
 /**
@@ -49,7 +80,8 @@ export const shoutIfExclaiming = (messages: string[]): string[] => {
  * 4 letters long.
  */
 export function countShortWords(words: string[]): number {
-    return 0;
+    const x = words.filter((y: string): boolean => y.length < 4);
+    return x.length;
 }
 
 /**
@@ -58,7 +90,14 @@ export function countShortWords(words: string[]): number {
  * then return true.
  */
 export function allRGB(colors: string[]): boolean {
-    return false;
+    if (colors.length == 0) return true;
+    const x = colors.filter(function (y: string): boolean {
+        if (y == "red") return false;
+        else if (y == "green") return false;
+        else if (y == "blue") return false;
+        else return true;
+    });
+    return x.length == 0;
 }
 
 /**
@@ -69,7 +108,9 @@ export function allRGB(colors: string[]): boolean {
  * And the array [] would become "0=0".
  */
 export function makeMath(addends: number[]): string {
-    return "";
+    if (addends.length == 0) return "0=0";
+    const sum = addends.reduce((total: number, num: number) => total + num, 0);
+    return sum + "=" + addends.join("+");
 }
 
 /**
@@ -82,5 +123,21 @@ export function makeMath(addends: number[]): string {
  * And the array [1, 9, 7] would become [1, 9, 7, 17]
  */
 export function injectPositive(values: number[]): number[] {
-    return [];
+    const x = [...values];
+    const sum = values.reduce(function (
+        total: number,
+        num: number,
+        index: number = 0,
+    ): number {
+        if (total < 0) return 0;
+        else if (num < 0) {
+            x.splice(++index, 0, total);
+            total = -1;
+            return total;
+        }
+        index++;
+        return total + num;
+    }, 0);
+    if (x.length == values.length) x.push(sum);
+    return x;
 }
